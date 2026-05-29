@@ -39,6 +39,11 @@ android {
     buildFeatures {
         compose = true
     }
+    packaging {
+        jniLibs {
+            useLegacyPackaging = false
+        }
+    }
 }
 
 dependencies {
@@ -51,7 +56,6 @@ dependencies {
     implementation(libs.placeholder.material3)
     implementation(libs.lottie.compose)
     implementation(libs.coil.compose)
-    implementation(libs.cloudy)
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.accompanist.permissions)
     implementation(libs.androidx.media3.exoplayer)
