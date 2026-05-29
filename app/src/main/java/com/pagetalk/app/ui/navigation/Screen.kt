@@ -6,8 +6,11 @@ import kotlinx.serialization.Serializable
 sealed class Screen {
 
     @Serializable
-    object Splash : Screen()
+    data object Splash : Screen()
 
     @Serializable
-    object Home : Screen()
+    data object Home : Screen()
+
+    @Serializable
+    data object ImportPdf : Screen()
 }

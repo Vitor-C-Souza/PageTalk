@@ -11,27 +11,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.pagetalk.app.ui.components.BottomNavigation
+import com.pagetalk.app.ui.components.HeaderCustom
 import com.pagetalk.app.ui.presentation.home.components.ContinueListen
-import com.pagetalk.app.ui.presentation.home.components.HomeHeader
 import com.pagetalk.app.ui.presentation.home.components.RecentDocuments
 import com.pagetalk.app.ui.theme.PageTalkTheme
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    onNavigateToImport: () -> Unit = {}
 ) {
-    HomeScreenContent(modifier)
+    HomeScreenContent(modifier, onNavigateToImport)
 }
 
 @Composable
 fun HomeScreenContent(
     modifier: Modifier = Modifier,
+    onNavigateToImport: () -> Unit = {}
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            HomeHeader()
+            HeaderCustom(
+                title = "Início",
+                subtitle = "Continue de onde parou"
+            )
         },
         bottomBar = {
             BottomNavigation(
@@ -47,7 +52,7 @@ fun HomeScreenContent(
                 .background(Color.Transparent),
         ) {
             item {
-                ContinueListen()
+                ContinueListen(onAddClick = onNavigateToImport)
             }
             item {
                 RecentDocuments()

@@ -21,7 +21,8 @@ import com.pagetalk.app.ui.theme.PageTalkTheme
 
 @Composable
 fun ContinueListen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onAddClick: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -44,7 +45,7 @@ fun ContinueListen(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item {
-                AddBookCard(onClick = {})
+                AddBookCard(onClick = onAddClick)
             }
             items(5) { index ->
                 BookCard(

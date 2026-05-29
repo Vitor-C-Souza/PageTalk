@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.pagetalk.app.ui.presentation.home.HomeScreen
+import com.pagetalk.app.ui.presentation.importpdf.ImportPdfScreen
 import com.pagetalk.app.ui.presentation.splash.SplashScreen
 
 @Composable
@@ -26,7 +27,17 @@ fun NavGraph(
         }
 
         composable<Screen.Home> {
-            HomeScreen()
+            HomeScreen(
+                onNavigateToImport = {
+                    navController.navigate(Screen.ImportPdf)
+                }
+            )
+        }
+
+        composable<Screen.ImportPdf> {
+            ImportPdfScreen {
+                navController.popBackStack()
+            }
         }
     }
 }
