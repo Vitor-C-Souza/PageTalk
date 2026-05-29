@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.sp
 import com.pagetalk.app.ui.theme.PageTalkTheme
 
 @Composable
-fun PageTalkButton(
+fun PrimaryButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -98,7 +98,7 @@ fun PageTalkButton(
 }
 
 @Composable
-fun PageTalkSecondaryButton(
+fun SecondaryButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -139,7 +139,7 @@ fun PageTalkSecondaryButton(
 }
 
 @Composable
-fun PageTalkIconButton(
+fun IconButton(
     icon: ImageVector,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -228,7 +228,7 @@ fun ButtonsPreview() {
                             fontWeight = FontWeight.Medium,
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
-                        PageTalkButton(
+                        PrimaryButton(
                             text = "Normal",
                             onClick = {},
                             modifier = Modifier.fillMaxWidth()
@@ -276,7 +276,7 @@ fun ButtonsPreview() {
                             }
                         }
                         Spacer(modifier = Modifier.height(12.dp))
-                        PageTalkButton(
+                        PrimaryButton(
                             text = "Disabled",
                             onClick = {},
                             enabled = false,
@@ -298,7 +298,7 @@ fun ButtonsPreview() {
                             fontWeight = FontWeight.Medium,
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
-                        PageTalkSecondaryButton(
+                        SecondaryButton(
                             text = "Normal",
                             onClick = {},
                             modifier = Modifier.fillMaxWidth()
@@ -330,7 +330,7 @@ fun ButtonsPreview() {
                             )
                         }
                         Spacer(modifier = Modifier.height(12.dp))
-                        PageTalkSecondaryButton(
+                        SecondaryButton(
                             text = "Disabled",
                             onClick = {},
                             enabled = false,
@@ -352,20 +352,20 @@ fun ButtonsPreview() {
                             fontWeight = FontWeight.Medium,
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
-                        PageTalkIconButton(
+                        IconButton(
                             icon = Icons.Default.PlayArrow,
                             onClick = {},
                             modifier = Modifier.fillMaxWidth()
                         )
                         Spacer(modifier = Modifier.height(12.dp))
-                        PageTalkIconButton(
+                        IconButton(
                             icon = Icons.Default.Pause,
                             onClick = {},
                             isPrimary = false,
                             modifier = Modifier.fillMaxWidth()
                         )
                         Spacer(modifier = Modifier.height(12.dp))
-                        PageTalkIconButton(
+                        IconButton(
                             icon = Icons.Default.PlayArrow,
                             onClick = {},
                             enabled = false,
