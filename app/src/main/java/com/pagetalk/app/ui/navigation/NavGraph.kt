@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.pagetalk.app.ui.presentation.home.HomeScreen
 import com.pagetalk.app.ui.presentation.importpdf.ImportPdfScreen
+import com.pagetalk.app.ui.presentation.library.LibraryScreen
 import com.pagetalk.app.ui.presentation.search.SearchScreen
 import com.pagetalk.app.ui.presentation.splash.SplashScreen
 
@@ -36,6 +37,11 @@ fun NavGraph(
                     navController.navigate(Screen.Search) {
                         launchSingleTop = true
                     }
+                },
+                onNavigateToLibrary = {
+                    navController.navigate(Screen.Library) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -54,6 +60,29 @@ fun NavGraph(
                     navController.navigate(Screen.Home) {
                         popUpTo(Screen.Home) { inclusive = true }
                     }
+                },
+                onNavigateToLibrary = {
+                    navController.navigate(Screen.Library) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable<Screen.Library> {
+            LibraryScreen(
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home) {
+                        popUpTo(Screen.Home) { inclusive = true }
+                    }
+                },
+                onNavigateToSearch = {
+                    navController.navigate(Screen.Search) {
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToImport = {
+                    navController.navigate(Screen.ImportPdf)
                 }
             )
         }

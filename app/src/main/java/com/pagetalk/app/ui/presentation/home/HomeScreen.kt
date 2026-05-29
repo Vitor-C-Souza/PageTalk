@@ -10,11 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.pagetalk.app.ui.components.BottomNavItem
 import com.pagetalk.app.ui.components.BottomNavigation
 import com.pagetalk.app.ui.components.HeaderCustom
-import com.pagetalk.app.ui.components.InputCustom
 import com.pagetalk.app.ui.navigation.Screen
 import com.pagetalk.app.ui.presentation.home.components.ContinueListen
 import com.pagetalk.app.ui.presentation.home.components.RecentDocuments
@@ -24,16 +22,18 @@ import com.pagetalk.app.ui.theme.PageTalkTheme
 fun HomeScreen(
     modifier: Modifier = Modifier,
     onNavigateToImport: () -> Unit = {},
-    onNavigateToSearch: () -> Unit = {}
+    onNavigateToSearch: () -> Unit = {},
+    onNavigateToLibrary: () -> Unit = {}
 ) {
-    HomeScreenContent(modifier, onNavigateToImport, onNavigateToSearch)
+    HomeScreenContent(modifier, onNavigateToImport, onNavigateToSearch, onNavigateToLibrary)
 }
 
 @Composable
 fun HomeScreenContent(
     modifier: Modifier = Modifier,
     onNavigateToImport: () -> Unit = {},
-    onNavigateToSearch: () -> Unit = {}
+    onNavigateToSearch: () -> Unit = {},
+    onNavigateToLibrary: () -> Unit = {}
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -50,6 +50,7 @@ fun HomeScreenContent(
                 onNavItemClick = { item ->
                     when (item) {
                         BottomNavItem.Search -> onNavigateToSearch()
+                        BottomNavItem.Library -> onNavigateToLibrary()
                         else -> { /* TODO: Handle others */
                         }
                     }
@@ -63,13 +64,6 @@ fun HomeScreenContent(
                 .padding(paddingValues)
                 .background(Color.Transparent),
         ) {
-            item {
-                InputCustom(
-                    value = "",
-                    onValueChange = { /* Navigate to search? */ },
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
             item {
                 ContinueListen(onAddClick = onNavigateToImport)
             }

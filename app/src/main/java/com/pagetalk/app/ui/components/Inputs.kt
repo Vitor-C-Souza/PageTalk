@@ -99,7 +99,7 @@ fun InputCustom(
 }
 
 @Composable
-fun PageTalkChip(
+fun Chip(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.primary,
@@ -164,17 +164,17 @@ fun InputsPreview() {
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    PageTalkChip(
+                    Chip(
                         text = "Em progresso",
                         color = colorScheme.primary,
                         onPrimary = colorScheme.tertiary
                     )
-                    PageTalkChip(
+                    Chip(
                         text = "Concluído",
                         color = Color(0xFF4ADE80),
                         onPrimary = Color(0xFF4ADE80)
                     )
-                    PageTalkChip(
+                    Chip(
                         text = "Novo",
                         color = Color(0xFFFACC15),
                         onPrimary = Color(0xFFFACC15)

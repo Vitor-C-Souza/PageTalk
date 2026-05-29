@@ -32,13 +32,10 @@ sealed class BottomNavItem(
 ) {
     object Home : BottomNavItem(Screen.Home, "Home", Icons.Default.Home)
     object Search : BottomNavItem(Screen.Search, "Buscar", Icons.Default.Search)
-    object Library : BottomNavItem(
-        Screen.Home,
-        "Biblioteca",
-        Icons.AutoMirrored.Filled.LibraryBooks
-    ) // Placeholder
+    object Library :
+        BottomNavItem(Screen.Library, "Biblioteca", Icons.AutoMirrored.Filled.LibraryBooks)
 
-    object Profile : BottomNavItem(Screen.Home, "Perfil", Icons.Default.Person) // Placeholder
+    object Profile : BottomNavItem(Screen.Home, "Perfil", Icons.Default.Person)
 }
 
 @Composable
