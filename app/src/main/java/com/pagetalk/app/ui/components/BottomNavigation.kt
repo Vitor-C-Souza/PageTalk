@@ -22,22 +22,28 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.pagetalk.app.ui.navigation.Screen
 import com.pagetalk.app.ui.theme.PageTalkTheme
 
 sealed class BottomNavItem(
-    val route: String,
+    val screen: Screen,
     val title: String,
     val icon: ImageVector
 ) {
-    object Home : BottomNavItem("home", "Home", Icons.Default.Home)
-    object Search : BottomNavItem("search", "Buscar", Icons.Default.Search)
-    object Library : BottomNavItem("library", "Biblioteca", Icons.AutoMirrored.Filled.LibraryBooks)
-    object Profile : BottomNavItem("profile", "Perfil", Icons.Default.Person)
+    object Home : BottomNavItem(Screen.Home, "Home", Icons.Default.Home)
+    object Search : BottomNavItem(Screen.Search, "Buscar", Icons.Default.Search)
+    object Library : BottomNavItem(
+        Screen.Home,
+        "Biblioteca",
+        Icons.AutoMirrored.Filled.LibraryBooks
+    ) // Placeholder
+
+    object Profile : BottomNavItem(Screen.Home, "Perfil", Icons.Default.Person) // Placeholder
 }
 
 @Composable
 fun BottomNavigation(
-    currentRoute: String?,
+    currentScreen: Screen?,
     onNavItemClick: (BottomNavItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -57,7 +63,8 @@ fun BottomNavigation(
         tonalElevation = 0.dp
     ) {
         items.forEach { item ->
-            val isSelected = currentRoute == item.route
+            // Simple comparison for data objects
+            val isSelected = currentScreen == item.screen
 
             NavigationBarItem(
                 selected = isSelected,
@@ -77,9 +84,9 @@ fun BottomNavigation(
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = colorScheme.primary,
                     selectedTextColor = colorScheme.primary,
-                    unselectedIconColor = colorScheme.outline, // #7B8190 mapping
+                    unselectedIconColor = colorScheme.outline,
                     unselectedTextColor = colorScheme.outline,
-                    indicatorColor = Color.Transparent // Removing default indicator pill
+                    indicatorColor = Color.Transparent
                 )
             )
         }
@@ -103,7 +110,7 @@ fun BottomNavigationPreview() {
                 )
 
                 BottomNavigation(
-                    currentRoute = "home",
+                    currentScreen = Screen.Home,
                     onNavItemClick = {}
                 )
             }

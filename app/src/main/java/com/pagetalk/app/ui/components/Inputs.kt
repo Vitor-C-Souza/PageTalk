@@ -1,5 +1,6 @@
 package com.pagetalk.app.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,9 +13,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -32,7 +35,7 @@ import com.pagetalk.app.ui.theme.PageTalkTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PageTalkSearchInput(
+fun InputCustom(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -57,20 +60,38 @@ fun PageTalkSearchInput(
             Icon(
                 imageVector = Icons.Default.Search,
                 contentDescription = null,
-                tint = colorScheme.outline,
+                tint = colorScheme.primary,
                 modifier = Modifier.size(20.dp)
             )
         },
+        trailingIcon = {
+            if (value.isNotEmpty()) {
+                IconButton(
+                    onClick = { onValueChange("") },
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .size(24.dp)
+                        .background(colorScheme.primary.copy(alpha = 0.2f), CircleShape)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Limpar",
+                        tint = colorScheme.primary,
+                        modifier = Modifier.size(14.dp)
+                    )
+                }
+            }
+        },
         shape = RoundedCornerShape(16.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = colorScheme.surfaceVariant,
-            unfocusedContainerColor = colorScheme.surfaceVariant,
+            focusedContainerColor = colorScheme.surfaceVariant.copy(alpha = 0.5f),
+            unfocusedContainerColor = colorScheme.surfaceVariant.copy(alpha = 0.3f),
             disabledContainerColor = colorScheme.surfaceVariant,
             cursorColor = colorScheme.primary,
             focusedBorderColor = colorScheme.primary.copy(alpha = 0.5f),
             unfocusedBorderColor = colorScheme.primary.copy(alpha = 0.2f),
-            focusedTextColor = colorScheme.onSurface,
-            unfocusedTextColor = colorScheme.onSurface,
+            focusedTextColor = Color.White,
+            unfocusedTextColor = Color.White,
         ),
         singleLine = true,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search)
@@ -124,8 +145,8 @@ fun InputsPreview() {
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
-                PageTalkSearchInput(
-                    value = "",
+                InputCustom(
+                    value = "Design Patterns",
                     onValueChange = {}
                 )
 

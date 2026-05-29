@@ -13,4 +13,10 @@ sealed class Screen {
 
     @Serializable
     data object ImportPdf : Screen()
+
+    @Serializable
+    data object Search : Screen()
+
+    @Serializable
+    data object Library : Screen()
 }
