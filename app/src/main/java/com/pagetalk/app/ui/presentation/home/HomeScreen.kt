@@ -1,27 +1,65 @@
 package com.pagetalk.app.ui.presentation.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import com.pagetalk.app.ui.components.BottomNavigation
+import com.pagetalk.app.ui.presentation.home.components.ContinueListen
+import com.pagetalk.app.ui.presentation.home.components.HomeHeader
+import com.pagetalk.app.ui.presentation.home.components.RecentDocuments
+import com.pagetalk.app.ui.theme.PageTalkTheme
 
 @Composable
-fun HomeScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "HomeScreen",
-            style = MaterialTheme.typography.headlineMedium,
-            color = Color.White
-        )
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+) {
+    HomeScreenContent(modifier)
+}
+
+@Composable
+fun HomeScreenContent(
+    modifier: Modifier = Modifier,
+) {
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background,
+        topBar = {
+            HomeHeader()
+        },
+        bottomBar = {
+            BottomNavigation(
+                currentRoute = "home",
+                onNavItemClick = { /* TODO: Implement navigation */ },
+            )
+        }
+    ) { paddingValues ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .background(Color.Transparent),
+        ) {
+            item {
+                ContinueListen()
+            }
+            item {
+                RecentDocuments()
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+private fun HomeScreenPreview() {
+    PageTalkTheme(darkTheme = true, dynamicColor = false) {
+        HomeScreenContent()
     }
 }
