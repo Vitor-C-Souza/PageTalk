@@ -1,7 +1,6 @@
 package com.pagetalk.app.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,9 +14,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.LibraryBooks
+import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -25,15 +26,80 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pagetalk.app.ui.theme.PageTalkTheme
+
+
+@Composable
+fun AddBookCard(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colorScheme = MaterialTheme.colorScheme
+    val stroke =
+        Stroke(width = 2f, pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f))
+
+    Column(
+        modifier = modifier
+            .width(160.dp)
+            .padding(bottom = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(3f / 4.5f)
+                .clickable(onClick = onClick)
+                .drawBehind {
+                    drawRoundRect(
+                        color = Color.White.copy(alpha = 0.1f),
+                        style = stroke,
+                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(24.dp.toPx())
+                    )
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Surface(
+                    modifier = Modifier.size(56.dp),
+                    shape = CircleShape,
+                    color = colorScheme.primary,
+                    tonalElevation = 8.dp
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = null,
+                        modifier = Modifier.padding(12.dp),
+                        tint = Color.White
+                    )
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = "Adicionar",
+                    color = colorScheme.primary,
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = "Novo PDF",
+            style = MaterialTheme.typography.bodyLarge,
+            color = colorScheme.outline,
+            fontWeight = FontWeight.Medium
+        )
+    }
+}
 
 @Composable
 fun BookCard(
@@ -46,106 +112,191 @@ fun BookCard(
 ) {
     val colorScheme = MaterialTheme.colorScheme
 
-    // Card Container Gradient
-    val cardGradient = Brush.linearGradient(
-        colors = listOf(colorScheme.surface, colorScheme.surfaceVariant)
-    )
-
-    Surface(
+    Column(
         modifier = modifier
-            .clip(RoundedCornerShape(24.dp))
-            .clickable(onClick = onClick)
-            .border(
-                width = 1.dp,
-                color = Color.White.copy(alpha = 0.05f),
-                shape = RoundedCornerShape(24.dp)
-            ),
-        color = Color.Transparent,
-        shape = RoundedCornerShape(24.dp)
+            .width(160.dp)
+            .padding(bottom = 8.dp),
+        horizontalAlignment = Alignment.Start
     ) {
-        Column(
+        // Book Cover
+        Box(
             modifier = Modifier
-                .background(cardGradient)
-                .padding(24.dp)
+                .fillMaxWidth()
+                .aspectRatio(3f / 4.5f)
+                .clickable(onClick = onClick)
+                .graphicsLayer {
+                    shadowElevation = 8.dp.toPx()
+                    shape = RoundedCornerShape(24.dp)
+                    clip = true
+                    this.ambientShadowColor = Color(0xFF7C5CFF).copy(alpha = 0.2f)
+                    this.spotShadowColor = Color(0xFF7C5CFF).copy(alpha = 0.2f)
+                }
+                .background(coverGradient, shape = RoundedCornerShape(24.dp)),
+            contentAlignment = Alignment.Center
         ) {
-            // Book Cover
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.MenuBook,
+                contentDescription = null,
+                modifier = Modifier.size(48.dp),
+                tint = Color.White.copy(alpha = 0.8f)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Title
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium.copy(
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                fontSize = 16.sp
+            ),
+            maxLines = 1
+        )
+
+        Text(
+            text = author,
+            style = MaterialTheme.typography.bodySmall.copy(
+                color = colorScheme.outline,
+                fontSize = 12.sp
+            ),
+            maxLines = 1
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Progress Bar
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            // Custom Progress Bar
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(3f / 4f)
-                    .graphicsLayer {
-                        shadowElevation = 16.dp.toPx()
-                        shape = RoundedCornerShape(16.dp)
-                        clip = false
-                        this.ambientShadowColor = Color(0xFF7C5CFF).copy(alpha = 0.2f)
-                        this.spotShadowColor = Color(0xFF7C5CFF).copy(alpha = 0.2f)
-                    }
-                    .background(coverGradient, shape = RoundedCornerShape(16.dp)),
-                contentAlignment = Alignment.Center
+                    .weight(1f)
+                    .height(4.dp)
+                    .background(colorScheme.surfaceVariant, shape = RoundedCornerShape(100.dp))
             ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.LibraryBooks,
-                    contentDescription = null,
-                    modifier = Modifier.size(48.dp),
-                    tint = Color.White.copy(alpha = 0.8f)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(progress)
+                        .fillMaxHeight()
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(colorScheme.primary, colorScheme.secondary)
+                            ),
+                            shape = RoundedCornerShape(100.dp)
+                        )
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Title and Author
             Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Medium,
-                    color = Color.White,
-                    fontSize = 16.sp
-                )
-            )
-
-            Text(
-                text = author,
-                style = MaterialTheme.typography.bodySmall.copy(
+                text = "${(progress * 100).toInt()}%",
+                style = MaterialTheme.typography.labelSmall.copy(
                     color = colorScheme.outline,
-                    fontSize = 14.sp
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 12.sp
                 )
             )
+        }
+    }
+}
 
-            Spacer(modifier = Modifier.height(12.dp))
+@Composable
+fun RecentDocumentItem(
+    title: String,
+    author: String,
+    progress: Float,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
+) {
+    val colorScheme = MaterialTheme.colorScheme
 
-            // Progress Bar
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+    Surface(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(24.dp),
+        color = colorScheme.surfaceVariant.copy(alpha = 0.5f)
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Document Icon Box
+            Box(
+                modifier = Modifier
+                    .size(80.dp)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            listOf(colorScheme.primary, colorScheme.secondary)
+                        ),
+                        shape = RoundedCornerShape(32.dp)
+                    ),
+                contentAlignment = Alignment.Center
             ) {
-                // Custom Progress Bar
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(4.dp)
-                        .background(colorScheme.surfaceVariant, shape = RoundedCornerShape(100.dp))
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.MenuBook,
+                    contentDescription = null,
+                    modifier = Modifier.size(32.dp),
+                    tint = Color.White
+                )
+            }
+
+            Spacer(modifier = Modifier.width(20.dp))
+
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    ),
+                    color = Color.White
+                )
+
+                Text(
+                    text = author,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = colorScheme.outline
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Progress row
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth(progress)
-                            .fillMaxHeight()
+                            .weight(1f)
+                            .height(6.dp)
                             .background(
-                                Brush.horizontalGradient(
-                                    listOf(colorScheme.primary, colorScheme.secondary)
-                                ),
+                                Color.White.copy(alpha = 0.05f),
                                 shape = RoundedCornerShape(100.dp)
                             )
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(progress)
+                                .fillMaxHeight()
+                                .background(colorScheme.primary, shape = RoundedCornerShape(100.dp))
+                        )
+                    }
+
+                    Text(
+                        text = "${(progress * 100).toInt()}%",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            color = colorScheme.outline,
+                            fontSize = 12.sp
+                        )
                     )
                 }
-
-                Text(
-                    text = "${(progress * 100).toInt()}%",
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        color = colorScheme.tertiary,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 12.sp
-                    )
-                )
             }
         }
     }
