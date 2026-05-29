@@ -36,7 +36,7 @@ sealed class BottomNavItem(
 }
 
 @Composable
-fun PageTalkBottomNavigation(
+fun BottomNavigation(
     currentRoute: String?,
     onNavItemClick: (BottomNavItem) -> Unit,
     modifier: Modifier = Modifier
@@ -102,7 +102,7 @@ fun BottomNavigationPreview() {
                     modifier = Modifier.padding(bottom = 24.dp)
                 )
 
-                PageTalkBottomNavigation(
+                BottomNavigation(
                     currentRoute = "home",
                     onNavItemClick = {}
                 )
