@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.sp
 import com.pagetalk.app.ui.theme.PageTalkTheme
 
 @Composable
-fun PageTalkBookCard(
+fun BookCard(
     title: String,
     author: String,
     progress: Float, // 0.0 to 1.0
@@ -168,7 +168,7 @@ fun CardsPreview() {
                     modifier = Modifier.padding(bottom = 24.dp)
                 )
 
-                PageTalkBookCard(
+                BookCard(
                     title = "Título do Livro",
                     author = "Autor",
                     progress = 0.75f,
@@ -177,7 +177,7 @@ fun CardsPreview() {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                PageTalkBookCard(
+                BookCard(
                     title = "Outro Documento",
                     author = "Autor",
                     progress = 0.33f,
