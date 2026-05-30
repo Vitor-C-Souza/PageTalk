@@ -2,7 +2,6 @@ package com.pagetalk.app.ui.presentation.search
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -48,7 +48,6 @@ import com.pagetalk.app.ui.navigation.Screen
 import com.pagetalk.app.ui.presentation.search.components.SearchResultItem
 import com.pagetalk.app.ui.theme.PageTalkTheme
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
@@ -81,7 +80,7 @@ fun SearchScreen(
                 Surface(
                     onClick = { /* TODO: Filters */ },
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    shape = androidx.compose.foundation.shape.CircleShape,
+                    shape = CircleShape,
                     color = Color.White.copy(alpha = 0.05f),
                     border = androidx.compose.foundation.BorderStroke(
                         1.dp,
@@ -112,77 +111,18 @@ fun SearchScreen(
             }
         },
         bottomBar = {
-            Column {
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Buscas recentes",
-                        color = Color.White,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    TextButton(onClick = { /* TODO: Clear */ }) {
-                        Text(
-                            text = "Limpar",
-                            color = colorScheme.outline,
-                            fontSize = 13.sp
-                        )
-                    }
-                }
-
-                FlowRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    listOf("Clean Code", "Refactoring", "Architecture").forEach { term ->
-                        SuggestionChip(
-                            onClick = { searchQuery = term },
-                            label = {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(
-                                        Icons.Default.AccessTime,
-                                        null,
-                                        modifier = Modifier.size(14.dp)
-                                    )
-                                    Spacer(Modifier.width(4.dp))
-                                    Text(term)
-                                }
-                            },
-                            shape = CircleShape,
-                            colors = SuggestionChipDefaults.suggestionChipColors(
-                                containerColor = Color.White.copy(alpha = 0.05f),
-                                labelColor = colorScheme.onSurfaceVariant
-                            ),
-                            border = SuggestionChipDefaults.suggestionChipBorder(
-                                borderColor = Color.White.copy(alpha = 0.1f),
-                                enabled = true
-                            )
-                        )
-                    }
-                }
-                BottomNavigation(
-                    currentScreen = Screen.Search,
-                    onNavItemClick = { item ->
-                        when (item) {
-                            BottomNavItem.Home -> onNavigateToHome()
-                            BottomNavItem.Library -> onNavigateToLibrary()
-                            BottomNavItem.Profile -> onNavigateToProfile()
-                            BottomNavItem.Search -> { /* Already here */
-                            }
+            BottomNavigation(
+                currentScreen = Screen.Search,
+                onNavItemClick = { item ->
+                    when (item) {
+                        BottomNavItem.Home -> onNavigateToHome()
+                        BottomNavItem.Library -> onNavigateToLibrary()
+                        BottomNavItem.Profile -> onNavigateToProfile()
+                        BottomNavItem.Search -> { /* Already here */
                         }
                     }
-                )
-            }
+                }
+            )
         }
     ) { paddingValues ->
         LazyColumn(
@@ -246,7 +186,61 @@ fun SearchScreen(
 
             // Recent Searches section
             item {
+                Spacer(modifier = Modifier.height(16.dp))
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f))
+                Spacer(modifier = Modifier.height(16.dp))
 
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Buscas recentes",
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    TextButton(onClick = { /* TODO: Clear */ }) {
+                        Text(
+                            text = "Limpar",
+                            color = colorScheme.outline,
+                            fontSize = 13.sp
+                        )
+                    }
+                }
+
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    listOf("Clean Code", "Refactoring", "Architecture").forEach { term ->
+                        SuggestionChip(
+                            onClick = { searchQuery = term },
+                            label = {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        Icons.Default.AccessTime,
+                                        null,
+                                        modifier = Modifier.size(14.dp)
+                                    )
+                                    Spacer(Modifier.width(4.dp))
+                                    Text(term)
+                                }
+                            },
+                            shape = CircleShape,
+                            colors = SuggestionChipDefaults.suggestionChipColors(
+                                containerColor = Color.White.copy(alpha = 0.05f),
+                                labelColor = colorScheme.onSurfaceVariant
+                            ),
+                            border = SuggestionChipDefaults.suggestionChipBorder(
+                                borderColor = Color.White.copy(alpha = 0.1f),
+                                enabled = true
+                            )
+                        )
+                    }
+                }
             }
         }
     }

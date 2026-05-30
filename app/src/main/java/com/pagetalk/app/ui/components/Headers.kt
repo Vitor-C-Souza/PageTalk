@@ -3,6 +3,7 @@ package com.pagetalk.app.ui.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -28,7 +29,8 @@ fun HeaderCustom(
     title: String,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
-    onBackClick: (() -> Unit)? = null
+    onBackClick: (() -> Unit)? = null,
+    actions: @Composable (RowScope.() -> Unit)? = null
 ) {
     Row(
         modifier = modifier
@@ -68,6 +70,10 @@ fun HeaderCustom(
                     color = MaterialTheme.colorScheme.outline
                 )
             }
+        }
+
+        if (actions != null) {
+            actions()
         }
     }
 }

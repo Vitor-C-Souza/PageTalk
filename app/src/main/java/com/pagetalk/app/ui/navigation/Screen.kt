@@ -19,4 +19,7 @@ sealed class Screen {
 
     @Serializable
     data object Library : Screen()
+
+    @Serializable
+    data object Profile : Screen()
 }

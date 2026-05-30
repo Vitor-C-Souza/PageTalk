@@ -35,7 +35,7 @@ sealed class BottomNavItem(
     object Library :
         BottomNavItem(Screen.Library, "Biblioteca", Icons.AutoMirrored.Filled.LibraryBooks)
 
-    object Profile : BottomNavItem(Screen.Home, "Perfil", Icons.Default.Person)
+    object Profile : BottomNavItem(Screen.Profile, "Perfil", Icons.Default.Person)
 }
 
 @Composable

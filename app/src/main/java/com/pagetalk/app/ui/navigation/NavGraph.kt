@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import com.pagetalk.app.ui.presentation.home.HomeScreen
 import com.pagetalk.app.ui.presentation.importpdf.ImportPdfScreen
 import com.pagetalk.app.ui.presentation.library.LibraryScreen
+import com.pagetalk.app.ui.presentation.profile.ProfileScreen
 import com.pagetalk.app.ui.presentation.search.SearchScreen
 import com.pagetalk.app.ui.presentation.splash.SplashScreen
 
@@ -42,6 +43,11 @@ fun NavGraph(
                     navController.navigate(Screen.Library) {
                         launchSingleTop = true
                     }
+                },
+                onNavigateToProfile = {
+                    navController.navigate(Screen.Profile) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -65,6 +71,11 @@ fun NavGraph(
                     navController.navigate(Screen.Library) {
                         launchSingleTop = true
                     }
+                },
+                onNavigateToProfile = {
+                    navController.navigate(Screen.Profile) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -83,6 +94,31 @@ fun NavGraph(
                 },
                 onNavigateToImport = {
                     navController.navigate(Screen.ImportPdf)
+                },
+                onNavigateToProfile = {
+                    navController.navigate(Screen.Profile) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable<Screen.Profile> {
+            ProfileScreen(
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home) {
+                        popUpTo(Screen.Home) { inclusive = true }
+                    }
+                },
+                onNavigateToSearch = {
+                    navController.navigate(Screen.Search) {
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToLibrary = {
+                    navController.navigate(Screen.Library) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }

@@ -23,9 +23,16 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     onNavigateToImport: () -> Unit = {},
     onNavigateToSearch: () -> Unit = {},
-    onNavigateToLibrary: () -> Unit = {}
+    onNavigateToLibrary: () -> Unit = {},
+    onNavigateToProfile: () -> Unit = {}
 ) {
-    HomeScreenContent(modifier, onNavigateToImport, onNavigateToSearch, onNavigateToLibrary)
+    HomeScreenContent(
+        modifier,
+        onNavigateToImport,
+        onNavigateToSearch,
+        onNavigateToLibrary,
+        onNavigateToProfile
+    )
 }
 
 @Composable
@@ -33,7 +40,8 @@ fun HomeScreenContent(
     modifier: Modifier = Modifier,
     onNavigateToImport: () -> Unit = {},
     onNavigateToSearch: () -> Unit = {},
-    onNavigateToLibrary: () -> Unit = {}
+    onNavigateToLibrary: () -> Unit = {},
+    onNavigateToProfile: () -> Unit = {}
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -51,6 +59,7 @@ fun HomeScreenContent(
                     when (item) {
                         BottomNavItem.Search -> onNavigateToSearch()
                         BottomNavItem.Library -> onNavigateToLibrary()
+                        BottomNavItem.Profile -> onNavigateToProfile()
                         else -> { /* TODO: Handle others */
                         }
                     }
