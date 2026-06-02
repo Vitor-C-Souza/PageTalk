@@ -2,7 +2,6 @@ package com.pagetalk.app.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -28,21 +27,21 @@ fun PageTalkFAB(
 
     Box(
         modifier = modifier
-            .size(100.dp), // Larger area for the glow
+            .size(90.dp), // Slightly smaller area
         contentAlignment = Alignment.Center
     ) {
-        // Vibrant Radial Glow
+        // More subtle and natural glow
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .size(76.dp)
                 .drawBehind {
                     drawCircle(
                         brush = Brush.radialGradient(
-                            0.0f to colorScheme.primary.copy(alpha = 0.5f),
-                            0.4f to colorScheme.primary.copy(alpha = 0.2f),
+                            0.0f to colorScheme.primary.copy(alpha = 0.25f),
+                            0.7f to colorScheme.primary.copy(alpha = 0.05f),
                             1.0f to Color.Transparent,
                         ),
-                        radius = size.minDimension / 2
+                        radius = size.minDimension / 1.1f
                     )
                 }
         )
@@ -53,7 +52,7 @@ fun PageTalkFAB(
             contentColor = Color.White,
             shape = CircleShape,
             modifier = Modifier
-                .size(64.dp)
+                .size(60.dp)
                 .background(
                     brush = Brush.horizontalGradient(
                         listOf(colorScheme.primary, colorScheme.secondary)

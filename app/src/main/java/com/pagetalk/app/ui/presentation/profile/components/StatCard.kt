@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -52,6 +53,21 @@ fun StatCard(
             modifier = Modifier
                 .fillMaxSize()
                 .background(cardBackground)
+                .drawBehind {
+                    // Smooth, large radial gradient for a natural "glow" from the corner
+                    drawCircle(
+                        brush = Brush.radialGradient(
+                            0.0f to color.copy(alpha = 0.15f),
+                            0.5f to color.copy(alpha = 0.05f),
+                            1.0f to Color.Transparent,
+                        ),
+                        radius = size.maxDimension * 0.8f,
+                        center = androidx.compose.ui.geometry.Offset(
+                            size.width * 0.9f,
+                            size.height * 0.2f
+                        )
+                    )
+                }
         ) {
             Column(
                 modifier = Modifier
