@@ -12,13 +12,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.pagetalk.app.domain.model.Book
 import com.pagetalk.app.ui.components.RecentDocumentItem
 import com.pagetalk.app.ui.theme.PageTalkTheme
 
 @Composable
 fun RecentDocuments(
+    books: List<Book>,
     modifier: Modifier = Modifier
 ) {
+    if (books.isEmpty()) return
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -33,16 +37,14 @@ fun RecentDocuments(
         )
 
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            repeat(3) { index ->
+            books.forEach { book ->
                 RecentDocumentItem(
-                    title = "Documento ${index + 1}",
-                    author = "Autor ${index + 1}",
-                    progress = if (index == 0) 0.6f else if (index == 1) 0.4f else 0.25f
+                    title = book.title,
+                    author = book.author,
+                    progress = book.progress,
+                    onClick = { /* TODO: Navigate to player */ }
                 )
             }
         }
@@ -53,6 +55,25 @@ fun RecentDocuments(
 @Composable
 private fun RecentDocumentsPreview() {
     PageTalkTheme(darkTheme = true, dynamicColor = false) {
-        RecentDocuments()
+        RecentDocuments(
+            books = listOf(
+                Book(
+                    title = "Documento 1",
+                    author = "Autor 1",
+                    progress = 0.6f,
+                    uri = "",
+                    size = "1MB",
+                    pages = 50
+                ),
+                Book(
+                    title = "Documento 2",
+                    author = "Autor 2",
+                    progress = 0.1f,
+                    uri = "",
+                    size = "5MB",
+                    pages = 200
+                )
+            )
+        )
     }
 }

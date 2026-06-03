@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,14 +16,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.pagetalk.app.domain.model.Book
 import com.pagetalk.app.ui.components.AddBookCard
 import com.pagetalk.app.ui.components.BookCard
 import com.pagetalk.app.ui.theme.PageTalkTheme
 
 @Composable
 fun ContinueListen(
-    modifier: Modifier = Modifier,
-    onAddClick: () -> Unit = {}
+    books: List<Book>,
+    onAddClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
@@ -47,15 +50,16 @@ fun ContinueListen(
             item {
                 AddBookCard(onClick = onAddClick)
             }
-            items(5) { index ->
+            itemsIndexed(books) { index, book ->
                 BookCard(
-                    title = "Livro ${index + 1}",
-                    author = "Autor ${index + 1}",
-                    progress = 0.25f + (index * 0.10f),
-                    coverGradient = if (index % 2 == 0)
+                    title = book.title,
+                    author = book.author,
+                    progress = book.progress,
+                    coverGradient = if (index % 2 == 0) 
                         Brush.linearGradient(listOf(Color(0xFF7C5CFF), Color(0xFFB8A9FF)))
                     else
-                        Brush.linearGradient(listOf(Color(0xFF9F8CFF), Color(0xFF7C5CFF)))
+                        Brush.linearGradient(listOf(Color(0xFF9F8CFF), Color(0xFF7C5CFF))),
+                    onClick = { /* TODO: Navigate to player */ }
                 )
             }
         }
@@ -66,6 +70,26 @@ fun ContinueListen(
 @Composable
 private fun ContinueListenPreview() {
     PageTalkTheme(darkTheme = true, dynamicColor = false) {
-        ContinueListen()
+        ContinueListen(
+            books = listOf(
+                Book(
+                    title = "Livro 1",
+                    author = "Autor 1",
+                    progress = 0.45f,
+                    uri = "",
+                    size = "2MB",
+                    pages = 100
+                ),
+                Book(
+                    title = "Livro 2",
+                    author = "Autor 2",
+                    progress = 0.80f,
+                    uri = "",
+                    size = "1.5MB",
+                    pages = 120
+                )
+            ),
+            onAddClick = {}
+        )
     }
 }
