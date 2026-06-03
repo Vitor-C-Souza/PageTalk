@@ -19,6 +19,7 @@ import com.pagetalk.app.ui.theme.PageTalkTheme
 @Composable
 fun RecentDocuments(
     books: List<Book>,
+    onBookClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (books.isEmpty()) return
@@ -44,7 +45,7 @@ fun RecentDocuments(
                     title = book.title,
                     author = book.author,
                     progress = book.progress,
-                    onClick = { /* TODO: Navigate to player */ }
+                    onClick = { onBookClick(book.id) }
                 )
             }
         }
@@ -58,6 +59,7 @@ private fun RecentDocumentsPreview() {
         RecentDocuments(
             books = listOf(
                 Book(
+                    id = 1,
                     title = "Documento 1",
                     author = "Autor 1",
                     progress = 0.6f,
@@ -66,6 +68,7 @@ private fun RecentDocumentsPreview() {
                     pages = 50
                 ),
                 Book(
+                    id = 2,
                     title = "Documento 2",
                     author = "Autor 2",
                     progress = 0.1f,
@@ -73,7 +76,8 @@ private fun RecentDocumentsPreview() {
                     size = "5MB",
                     pages = 200
                 )
-            )
+            ),
+            onBookClick = {}
         )
     }
 }

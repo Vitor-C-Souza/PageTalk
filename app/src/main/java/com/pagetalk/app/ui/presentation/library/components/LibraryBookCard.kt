@@ -2,6 +2,7 @@ package com.pagetalk.app.ui.presentation.library.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -31,16 +32,29 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.pagetalk.app.ui.presentation.library.LibraryBook
+import com.pagetalk.app.domain.model.Book
 
 @Composable
-fun LibraryBookCard(book: LibraryBook, modifier: Modifier = Modifier) {
+fun LibraryBookCard(
+    book: Book,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val colorScheme = MaterialTheme.colorScheme
+
+    // Default gradient based on ID or something stable
+    val coverGradient = Brush.linearGradient(
+        listOf(
+            Color(0xFF7C5CFF),
+            Color(0xFF9F8CFF)
+        )
+    )
 
     Column(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(24.dp))
+            .clickable(onClick = onClick)
             .background(
                 Brush.linearGradient(
                     listOf(
@@ -57,7 +71,7 @@ fun LibraryBookCard(book: LibraryBook, modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .aspectRatio(3f / 4f)
                 .clip(RoundedCornerShape(16.dp))
-                .background(book.coverGradient),
+                .background(coverGradient),
             contentAlignment = Alignment.Center
         ) {
             // Glassmorphism overlay
@@ -85,7 +99,9 @@ fun LibraryBookCard(book: LibraryBook, modifier: Modifier = Modifier) {
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Medium,
                     textAlign = TextAlign.Center,
-                    lineHeight = 12.sp
+                    lineHeight = 12.sp,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 
@@ -136,7 +152,7 @@ fun LibraryBookCard(book: LibraryBook, modifier: Modifier = Modifier) {
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth(book.progress)
+                    .fillMaxWidth(book.progress.coerceIn(0f, 1f))
                     .fillMaxHeight()
                     .background(
                         Brush.horizontalGradient(

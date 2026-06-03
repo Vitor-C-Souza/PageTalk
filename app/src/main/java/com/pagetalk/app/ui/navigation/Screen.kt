@@ -22,4 +22,7 @@ sealed class Screen {
 
     @Serializable
     data object Profile : Screen()
+
+    @Serializable
+    data class Player(val bookId: Long) : Screen()
 }

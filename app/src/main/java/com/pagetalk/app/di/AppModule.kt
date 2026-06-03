@@ -7,8 +7,10 @@ import com.pagetalk.app.domain.repository.BookRepository
 import com.pagetalk.app.domain.usecase.AddBookUseCase
 import com.pagetalk.app.domain.usecase.GetAllBooksUseCase
 import com.pagetalk.app.domain.usecase.UpdateBookUseCase
-import com.pagetalk.app.ui.presentation.home.viewmodel.HomeViewModel
+import com.pagetalk.app.ui.presentation.home.HomeViewModel
 import com.pagetalk.app.ui.presentation.importpdf.ImportPdfViewModel
+import com.pagetalk.app.ui.presentation.library.LibraryViewModel
+import com.pagetalk.app.ui.presentation.search.SearchViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -33,4 +35,6 @@ val appModule = module {
 
     viewModel { ImportPdfViewModel(get(), get(), get()) }
     viewModel { HomeViewModel(get()) }
+    viewModel { SearchViewModel(get()) }
+    viewModel { LibraryViewModel(get()) }
 }

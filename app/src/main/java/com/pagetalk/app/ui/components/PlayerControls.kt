@@ -7,12 +7,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
@@ -27,16 +27,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pagetalk.app.ui.theme.PageTalkTheme
 
 @Composable
-fun PageTalkPlayerControls(
+fun PlayerControls(
     onSkipBack: () -> Unit,
     onPlayPause: () -> Unit,
     onSkipForward: () -> Unit,
@@ -49,7 +49,7 @@ fun PageTalkPlayerControls(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Skip Back Button
-        PageTalkSecondaryIconButton(
+        SecondaryIconButton(
             icon = Icons.Default.SkipPrevious,
             onClick = onSkipBack,
             modifier = Modifier.size(56.dp)
@@ -58,16 +58,16 @@ fun PageTalkPlayerControls(
         Spacer(modifier = Modifier.width(24.dp))
 
         // Play/Pause Button
-        PageTalkPrimaryRoundButton(
+        PageTalkPrimaryPillButton(
             icon = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
             onClick = onPlayPause,
-            modifier = Modifier.size(80.dp)
+            modifier = Modifier.size(width = 120.dp, height = 64.dp)
         )
 
         Spacer(modifier = Modifier.width(24.dp))
 
         // Skip Forward Button
-        PageTalkSecondaryIconButton(
+        SecondaryIconButton(
             icon = Icons.Default.SkipNext,
             onClick = onSkipForward,
             modifier = Modifier.size(56.dp)
@@ -76,7 +76,7 @@ fun PageTalkPlayerControls(
 }
 
 @Composable
-fun PageTalkSecondaryIconButton(
+fun SecondaryIconButton(
     icon: ImageVector,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -108,45 +108,56 @@ fun PageTalkSecondaryIconButton(
 }
 
 @Composable
-fun PageTalkPrimaryRoundButton(
+fun PageTalkPrimaryPillButton(
     icon: ImageVector,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true
 ) {
     val colorScheme = MaterialTheme.colorScheme
-    val primaryGradient = Brush.horizontalGradient(
+    val primaryGradient = Brush.verticalGradient(
         colors = listOf(colorScheme.primary, colorScheme.secondary)
     )
+    val shape = RoundedCornerShape(32.dp)
 
-    Surface(
-        onClick = onClick,
-        enabled = enabled,
-        modifier = modifier
-            .graphicsLayer {
-                if (enabled) {
-                    shadowElevation = 12.dp.toPx()
-                    shape = CircleShape
-                    clip = false
-                    this.ambientShadowColor = colorScheme.primary
-                    this.spotShadowColor = colorScheme.primary
-                }
-            },
-        shape = CircleShape,
-        color = Color.Transparent
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
     ) {
+        // Outer Glow
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .background(primaryGradient),
-            contentAlignment = Alignment.Center
+                .fillMaxWidth(0.9f)
+                .fillMaxHeight(0.8f)
+                .blur(24.dp)
+                .background(colorScheme.primary.copy(alpha = 0.4f), shape)
+        )
+
+        Surface(
+            onClick = onClick,
+            enabled = enabled,
+            shape = shape,
+            color = Color.Transparent,
+            modifier = Modifier.fillMaxSize()
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = colorScheme.onPrimary,
-                modifier = Modifier.size(32.dp)
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(primaryGradient)
+                    .border(
+                        width = 1.dp,
+                        color = Color.White.copy(alpha = 0.2f),
+                        shape = shape
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = colorScheme.onPrimary,
+                    modifier = Modifier.size(36.dp)
+                )
+            }
         }
     }
 }
@@ -172,7 +183,7 @@ fun PlayerControlsPreview() {
                     modifier = Modifier.padding(bottom = 32.dp)
                 )
 
-                PageTalkPlayerControls(
+                PlayerControls(
                     onSkipBack = {},
                     onPlayPause = {},
                     onSkipForward = {}

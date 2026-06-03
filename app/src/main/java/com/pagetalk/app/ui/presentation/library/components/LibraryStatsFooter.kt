@@ -20,7 +20,12 @@ import androidx.compose.ui.unit.sp
 import com.pagetalk.app.ui.theme.Success
 
 @Composable
-fun LibraryStatsFooter(modifier: Modifier = Modifier) {
+fun LibraryStatsFooter(
+    total: Int,
+    reading: Int,
+    completed: Int,
+    modifier: Modifier = Modifier
+) {
     val colorScheme = MaterialTheme.colorScheme
 
     Surface(
@@ -38,17 +43,17 @@ fun LibraryStatsFooter(modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            StatItem(label = "Total", value = "24 livros", valueColor = Color.White)
+            StatItem(label = "Total", value = "$total livros", valueColor = Color.White)
             VerticalDivider(
                 modifier = Modifier.height(32.dp),
                 color = Color.White.copy(alpha = 0.05f)
             )
-            StatItem(label = "Lendo", value = "6 ativos", valueColor = colorScheme.primary)
+            StatItem(label = "Lendo", value = "$reading ativos", valueColor = colorScheme.primary)
             VerticalDivider(
                 modifier = Modifier.height(32.dp),
                 color = Color.White.copy(alpha = 0.05f)
             )
-            StatItem(label = "Concluídos", value = "18 livros", valueColor = Success)
+            StatItem(label = "Concluídos", value = "$completed livros", valueColor = Success)
         }
     }
 }

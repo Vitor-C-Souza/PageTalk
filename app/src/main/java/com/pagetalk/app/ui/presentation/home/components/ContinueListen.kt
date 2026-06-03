@@ -25,6 +25,7 @@ import com.pagetalk.app.ui.theme.PageTalkTheme
 fun ContinueListen(
     books: List<Book>,
     onAddClick: () -> Unit,
+    onBookClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -50,7 +51,7 @@ fun ContinueListen(
             item {
                 AddBookCard(onClick = onAddClick)
             }
-            itemsIndexed(books) { index, book ->
+            itemsIndexed(books, key = { _, book -> book.id }) { index, book ->
                 BookCard(
                     title = book.title,
                     author = book.author,
@@ -59,7 +60,7 @@ fun ContinueListen(
                         Brush.linearGradient(listOf(Color(0xFF7C5CFF), Color(0xFFB8A9FF)))
                     else
                         Brush.linearGradient(listOf(Color(0xFF9F8CFF), Color(0xFF7C5CFF))),
-                    onClick = { /* TODO: Navigate to player */ }
+                    onClick = { onBookClick(book.id) }
                 )
             }
         }
@@ -73,6 +74,7 @@ private fun ContinueListenPreview() {
         ContinueListen(
             books = listOf(
                 Book(
+                    id = 1,
                     title = "Livro 1",
                     author = "Autor 1",
                     progress = 0.45f,
@@ -81,6 +83,7 @@ private fun ContinueListenPreview() {
                     pages = 100
                 ),
                 Book(
+                    id = 2,
                     title = "Livro 2",
                     author = "Autor 2",
                     progress = 0.80f,
@@ -89,7 +92,8 @@ private fun ContinueListenPreview() {
                     pages = 120
                 )
             ),
-            onAddClick = {}
+            onAddClick = {},
+            onBookClick = {}
         )
     }
 }

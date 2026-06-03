@@ -25,7 +25,7 @@ import java.util.Locale
 class ImportPdfViewModel(
     getAllBooksUseCase: GetAllBooksUseCase,
     private val addBookUseCase: AddBookUseCase,
-    private val updateBookUseCase: UpdateBookUseCase
+    private val updateBookUseCase: UpdateBookUseCase,
 ) : ViewModel() {
 
     // Queue for processing files one by one (Sequential)
@@ -34,7 +34,7 @@ class ImportPdfViewModel(
     // Only show books from the last 24h as "recent" in this screen
     val recentBooks: StateFlow<List<Book>> = getAllBooksUseCase()
         .map { books ->
-            books.filter { System.currentTimeMillis() - it.timestamp < 24 * 60 * 60 * 1000 }
+            books.filter { (System.currentTimeMillis() - it.timestamp) < (24 * 60 * 60 * 1000) }
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
@@ -80,7 +80,7 @@ class ImportPdfViewModel(
                 currentBook = currentBook.copy(progress = 1.0f)
                 updateBookUseCase(currentBook)
             } catch (e: Exception) {
-                e.printStackTrace()
+                // Error handling
             }
         }
     }

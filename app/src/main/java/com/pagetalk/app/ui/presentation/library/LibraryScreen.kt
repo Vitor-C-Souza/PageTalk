@@ -18,16 +18,13 @@ import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.pagetalk.app.domain.model.Book
 import com.pagetalk.app.ui.components.BottomNavItem
 import com.pagetalk.app.ui.components.BottomNavigation
 import com.pagetalk.app.ui.components.HeaderCustom
@@ -39,6 +36,7 @@ import com.pagetalk.app.ui.presentation.library.components.LibraryFilterChip
 import com.pagetalk.app.ui.presentation.library.components.LibraryStatsFooter
 import com.pagetalk.app.ui.presentation.library.components.LibraryToggleButton
 import com.pagetalk.app.ui.theme.PageTalkTheme
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun LibraryScreen(
@@ -47,8 +45,45 @@ fun LibraryScreen(
     onNavigateToSearch: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
     onNavigateToImport: () -> Unit = {},
+    onNavigateToPlayer: (Long) -> Unit = {},
+    viewModel: LibraryViewModel = koinViewModel()
 ) {
-    var searchQuery by remember { mutableStateOf("") }
+    val searchQuery by viewModel.searchQuery.collectAsState()
+    val filter by viewModel.filter.collectAsState()
+    val filteredBooks by viewModel.filteredBooks.collectAsState()
+    val stats by viewModel.libraryStats.collectAsState()
+
+    LibraryScreenContent(
+        searchQuery = searchQuery,
+        filter = filter,
+        filteredBooks = filteredBooks,
+        stats = stats,
+        onSearchQueryChange = viewModel::onSearchQueryChange,
+        onFilterChange = viewModel::onFilterChange,
+        onNavigateToHome = onNavigateToHome,
+        onNavigateToSearch = onNavigateToSearch,
+        onNavigateToProfile = onNavigateToProfile,
+        onNavigateToImport = onNavigateToImport,
+        onBookClick = onNavigateToPlayer,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun LibraryScreenContent(
+    searchQuery: String,
+    filter: LibraryFilter,
+    filteredBooks: List<Book>,
+    stats: LibraryStats,
+    onSearchQueryChange: (String) -> Unit,
+    onFilterChange: (LibraryFilter) -> Unit,
+    onNavigateToHome: () -> Unit,
+    onNavigateToSearch: () -> Unit,
+    onNavigateToProfile: () -> Unit,
+    onNavigateToImport: () -> Unit,
+    onBookClick: (Long) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val colorScheme = MaterialTheme.colorScheme
 
     Scaffold(
@@ -79,7 +114,7 @@ fun LibraryScreen(
 
                 InputCustom(
                     value = searchQuery,
-                    onValueChange = { searchQuery = it },
+                    onValueChange = onSearchQueryChange,
                     placeholder = "Buscar na biblioteca...",
                     modifier = Modifier.padding(horizontal = 24.dp)
                 )
@@ -93,9 +128,21 @@ fun LibraryScreen(
                         .padding(horizontal = 24.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    LibraryFilterChip(text = "Todos", isSelected = true)
-                    LibraryFilterChip(text = "Em progresso", isSelected = false)
-                    LibraryFilterChip(text = "Concluídos", isSelected = false)
+                    LibraryFilterChip(
+                        text = "Todos",
+                        isSelected = filter == LibraryFilter.ALL,
+                        onClick = { onFilterChange(LibraryFilter.ALL) }
+                    )
+                    LibraryFilterChip(
+                        text = "Em progresso",
+                        isSelected = filter == LibraryFilter.IN_PROGRESS,
+                        onClick = { onFilterChange(LibraryFilter.IN_PROGRESS) }
+                    )
+                    LibraryFilterChip(
+                        text = "Concluídos",
+                        isSelected = filter == LibraryFilter.COMPLETED,
+                        onClick = { onFilterChange(LibraryFilter.COMPLETED) }
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -103,7 +150,11 @@ fun LibraryScreen(
         },
         bottomBar = {
             Column {
-                LibraryStatsFooter()
+                LibraryStatsFooter(
+                    total = stats.total,
+                    reading = stats.reading,
+                    completed = stats.completed
+                )
                 BottomNavigation(
                     currentScreen = Screen.Library,
                     onNavItemClick = { item ->
@@ -125,45 +176,6 @@ fun LibraryScreen(
             )
         }
     ) { paddingValues ->
-        val books = listOf(
-            LibraryBook(
-                "Design Patterns",
-                "Gang of Four",
-                0.85f,
-                Brush.linearGradient(listOf(Color(0xFF7C5CFF), Color(0xFFB8A9FF)))
-            ),
-            LibraryBook(
-                "Clean Code",
-                "Robert Martin",
-                0.60f,
-                Brush.linearGradient(listOf(Color(0xFF9F8CFF), Color(0xFF7C5CFF)))
-            ),
-            LibraryBook(
-                "Refactoring",
-                "Martin Fowler",
-                0.45f,
-                Brush.linearGradient(listOf(Color(0xFFB8A9FF), Color(0xFF9F8CFF)))
-            ),
-            LibraryBook(
-                "The Pragmatic",
-                "Hunt & Thomas",
-                0.92f,
-                Brush.linearGradient(listOf(Color(0xFF7C5CFF), Color(0xFF9F8CFF)))
-            ),
-            LibraryBook(
-                "Code Complete",
-                "Steve McConnell",
-                0.30f,
-                Brush.linearGradient(listOf(Color(0xFF9F8CFF), Color(0xFFB8A9FF)))
-            ),
-            LibraryBook(
-                "Domain Driven",
-                "Eric Evans",
-                0.15f,
-                Brush.linearGradient(listOf(Color(0xFFB8A9FF), Color(0xFF7C5CFF)))
-            )
-        )
-
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             modifier = Modifier
@@ -173,8 +185,11 @@ fun LibraryScreen(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(books) { book ->
-                LibraryBookCard(book)
+            items(filteredBooks, key = { it.id }) { book ->
+                LibraryBookCard(
+                    book = book,
+                    onClick = { onBookClick(book.id) }
+                )
             }
         }
     }
@@ -184,6 +199,37 @@ fun LibraryScreen(
 @Composable
 private fun LibraryScreenPreview() {
     PageTalkTheme(darkTheme = true, dynamicColor = false) {
-        LibraryScreen()
+        LibraryScreenContent(
+            searchQuery = "",
+            filter = LibraryFilter.ALL,
+            filteredBooks = listOf(
+                Book(
+                    id = 1,
+                    title = "O Senhor dos Anéis",
+                    author = "J.R.R. Tolkien",
+                    uri = "",
+                    size = "1MB",
+                    pages = 1000,
+                    progress = 0.5f
+                ),
+                Book(
+                    id = 2,
+                    title = "Harry Potter",
+                    author = "J.K. Rowling",
+                    uri = "",
+                    size = "1MB",
+                    pages = 500,
+                    progress = 1.0f
+                )
+            ),
+            stats = LibraryStats(total = 2, reading = 1, completed = 1),
+            onSearchQueryChange = {},
+            onFilterChange = {},
+            onNavigateToHome = {},
+            onNavigateToSearch = {},
+            onNavigateToProfile = {},
+            onNavigateToImport = {},
+            onBookClick = {}
+        )
     }
 }

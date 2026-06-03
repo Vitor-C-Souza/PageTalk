@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import com.pagetalk.app.ui.presentation.home.HomeScreen
 import com.pagetalk.app.ui.presentation.importpdf.ImportPdfScreen
 import com.pagetalk.app.ui.presentation.library.LibraryScreen
+import com.pagetalk.app.ui.presentation.player.PlayerScreen
 import com.pagetalk.app.ui.presentation.profile.ProfileScreen
 import com.pagetalk.app.ui.presentation.search.SearchScreen
 import com.pagetalk.app.ui.presentation.splash.SplashScreen
@@ -48,6 +49,9 @@ fun NavGraph(
                     navController.navigate(Screen.Profile) {
                         launchSingleTop = true
                     }
+                },
+                onNavigateToPlayer = { bookId ->
+                    navController.navigate(Screen.Player(bookId))
                 }
             )
         }
@@ -76,6 +80,9 @@ fun NavGraph(
                     navController.navigate(Screen.Profile) {
                         launchSingleTop = true
                     }
+                },
+                onNavigateToPlayer = { bookId ->
+                    navController.navigate(Screen.Player(bookId))
                 }
             )
         }
@@ -99,6 +106,17 @@ fun NavGraph(
                     navController.navigate(Screen.Profile) {
                         launchSingleTop = true
                     }
+                },
+                onNavigateToPlayer = { bookId ->
+                    navController.navigate(Screen.Player(bookId))
+                }
+            )
+        }
+
+        composable<Screen.Player> {
+            PlayerScreen(
+                onBack = {
+                    navController.popBackStack()
                 }
             )
         }

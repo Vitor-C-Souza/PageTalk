@@ -1,4 +1,4 @@
-package com.pagetalk.app.ui.presentation.home.viewmodel
+package com.pagetalk.app.ui.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,15 +15,15 @@ class HomeViewModel(
 
     // All books for recent documents
     val allBooks: StateFlow<List<Book>> = getAllBooksUseCase()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5000), emptyList())
 
     // Only books in progress for "Continue Listening"
     val continueListeningBooks: StateFlow<List<Book>> = allBooks
         .map { books -> books.filter { it.progress > 0f && it.progress < 1f } }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5000), emptyList())
 
     // Recent documents (limit to 5 for the list)
     val recentBooks: StateFlow<List<Book>> = allBooks
         .map { it.take(5) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5000), emptyList())
 }

@@ -1,33 +1,37 @@
 package com.pagetalk.app.ui.presentation.search
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SuggestionChip
-import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,16 +51,26 @@ import com.pagetalk.app.ui.components.InputCustom
 import com.pagetalk.app.ui.navigation.Screen
 import com.pagetalk.app.ui.presentation.search.components.SearchResultItem
 import com.pagetalk.app.ui.theme.PageTalkTheme
+import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
     onNavigateToHome: () -> Unit = {},
     onNavigateToLibrary: () -> Unit = {},
-    onNavigateToProfile: () -> Unit = {}
+    onNavigateToProfile: () -> Unit = {},
+    onNavigateToPlayer: (Long) -> Unit = {},
+    viewModel: SearchViewModel = koinViewModel()
 ) {
-    var searchQuery by remember { mutableStateOf("Design Patterns") }
+    val searchQuery by viewModel.searchQuery.collectAsState()
+    val searchResults by viewModel.searchResults.collectAsState()
+    val sortBy by viewModel.sortBy.collectAsState()
+    val progressFilter by viewModel.progressFilter.collectAsState()
+    
     val colorScheme = MaterialTheme.colorScheme
+    var showFilters by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -70,7 +84,7 @@ fun SearchScreen(
                 // Search Bar
                 InputCustom(
                     value = searchQuery,
-                    onValueChange = { searchQuery = it },
+                    onValueChange = { viewModel.onSearchQueryChange(it) },
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
 
@@ -78,13 +92,17 @@ fun SearchScreen(
 
                 // Filter Button
                 Surface(
-                    onClick = { /* TODO: Filters */ },
+                    onClick = { showFilters = true },
                     modifier = Modifier.padding(horizontal = 16.dp),
                     shape = CircleShape,
-                    color = Color.White.copy(alpha = 0.05f),
+                    color = if (progressFilter != SearchProgressFilter.ALL || sortBy != SortBy.NEWEST)
+                        colorScheme.primary.copy(alpha = 0.1f)
+                    else Color.White.copy(alpha = 0.05f),
                     border = androidx.compose.foundation.BorderStroke(
                         1.dp,
-                        colorScheme.primary.copy(alpha = 0.2f)
+                        if (progressFilter != SearchProgressFilter.ALL || sortBy != SortBy.NEWEST)
+                            colorScheme.primary.copy(alpha = 0.4f)
+                        else colorScheme.primary.copy(alpha = 0.2f)
                     )
                 ) {
                     Row(
@@ -125,133 +143,246 @@ fun SearchScreen(
             )
         }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // Results Header
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)) {
+            if (searchQuery.isBlank()) {
+                // Empty state or instructions
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    Icon(
+                        imageVector = Icons.Default.FilterList,
+                        contentDescription = null,
+                        tint = colorScheme.outline.copy(alpha = 0.2f),
+                        modifier = Modifier.size(80.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "5 resultados encontrados",
+                        text = "Digite algo para buscar",
                         color = colorScheme.outline,
-                        fontSize = 14.sp
+                        fontSize = 16.sp
                     )
-                    TextButton(onClick = { /* TODO: Sort */ }) {
-                        Text(
-                            text = "Ordenar",
-                            color = colorScheme.primary,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
                 }
-            }
-
-            // Search Results
-            val results = listOf(
-                SearchResultData("Design Patterns", "Gang of Four", 0.85f, "Título exato"),
-                SearchResultData("Design Systems", "Alla Kholmatova", 0.45f, "Título semelhante"),
-                SearchResultData("Refactoring: Design", "Martin Fowler", 0.60f, "No título"),
-                SearchResultData("Clean Architecture", "Robert Martin", 0.30f, "Conteúdo"),
-                SearchResultData("Domain Driven Design", "Eric Evans", 0.15f, "No título")
-            )
-
-            itemsIndexed(results) { index, result ->
-                val gradient = when (index % 5) {
-                    0 -> Brush.linearGradient(listOf(Color(0xFF7C5CFF), Color(0xFFB8A9FF)))
-                    1 -> Brush.linearGradient(listOf(Color(0xFF9F8CFF), Color(0xFF7C5CFF)))
-                    2 -> Brush.linearGradient(listOf(Color(0xFFB8A9FF), Color(0xFF9F8CFF)))
-                    3 -> Brush.linearGradient(listOf(Color(0xFF7C5CFF), Color(0xFF9F8CFF)))
-                    else -> Brush.linearGradient(listOf(Color(0xFF9F8CFF), Color(0xFFB8A9FF)))
-                }
-
-                SearchResultItem(
-                    title = result.title,
-                    author = result.author,
-                    progress = result.progress,
-                    match = result.match,
-                    isBestMatch = index == 0,
-                    iconGradient = gradient,
-                    onClick = { /* TODO: Navigate to player */ }
-                )
-            }
-
-            // Recent Searches section
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
-                HorizontalDivider(color = Color.White.copy(alpha = 0.05f))
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Text(
-                        text = "Buscas recentes",
-                        color = Color.White,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    TextButton(onClick = { /* TODO: Clear */ }) {
-                        Text(
-                            text = "Limpar",
-                            color = colorScheme.outline,
-                            fontSize = 13.sp
-                        )
-                    }
-                }
-
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    listOf("Clean Code", "Refactoring", "Architecture").forEach { term ->
-                        SuggestionChip(
-                            onClick = { searchQuery = term },
-                            label = {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(
-                                        Icons.Default.AccessTime,
-                                        null,
-                                        modifier = Modifier.size(14.dp)
-                                    )
-                                    Spacer(Modifier.width(4.dp))
-                                    Text(term)
-                                }
-                            },
-                            shape = CircleShape,
-                            colors = SuggestionChipDefaults.suggestionChipColors(
-                                containerColor = Color.White.copy(alpha = 0.05f),
-                                labelColor = colorScheme.onSurfaceVariant
-                            ),
-                            border = SuggestionChipDefaults.suggestionChipBorder(
-                                borderColor = Color.White.copy(alpha = 0.1f),
-                                enabled = true
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "${searchResults.size} resultados encontrados",
+                                color = colorScheme.outline,
+                                fontSize = 14.sp
                             )
+                        }
+                    }
+
+                    itemsIndexed(searchResults) { index, result ->
+                        val gradient = when (index % 5) {
+                            0 -> Brush.linearGradient(listOf(Color(0xFF7C5CFF), Color(0xFFB8A9FF)))
+                            1 -> Brush.linearGradient(listOf(Color(0xFF9F8CFF), Color(0xFF7C5CFF)))
+                            2 -> Brush.linearGradient(listOf(Color(0xFFB8A9FF), Color(0xFF9F8CFF)))
+                            3 -> Brush.linearGradient(listOf(Color(0xFF7C5CFF), Color(0xFF9F8CFF)))
+                            else -> Brush.linearGradient(
+                                listOf(
+                                    Color(0xFF9F8CFF),
+                                    Color(0xFFB8A9FF)
+                                )
+                            )
+                        }
+
+                        SearchResultItem(
+                            title = result.title,
+                            author = result.author,
+                            progress = result.progress,
+                            match = "PDF",
+                            isBestMatch = index == 0 && searchQuery.length > 2,
+                            iconGradient = gradient,
+                            onClick = { onNavigateToPlayer(result.id) }
                         )
                     }
+                }
+            }
+
+            if (showFilters) {
+                ModalBottomSheet(
+                    onDismissRequest = { showFilters = false },
+                    sheetState = sheetState,
+                    containerColor = Color(0xFF1A1C20),
+                    scrimColor = Color.Black.copy(alpha = 0.6f),
+                    dragHandle = { BottomSheetDefaults.DragHandle(color = Color.White.copy(alpha = 0.2f)) }
+                ) {
+                    FilterSheetContent(
+                        currentSort = sortBy,
+                        currentFilter = progressFilter,
+                        onSortChange = viewModel::onSortByChange,
+                        onFilterChange = viewModel::onProgressFilterChange,
+                        onClose = { showFilters = false }
+                    )
                 }
             }
         }
     }
 }
 
-data class SearchResultData(
-    val title: String,
-    val author: String,
-    val progress: Float,
-    val match: String
-)
+@Composable
+private fun FilterSheetContent(
+    currentSort: SortBy,
+    currentFilter: SearchProgressFilter,
+    onSortChange: (SortBy) -> Unit,
+    onFilterChange: (SearchProgressFilter) -> Unit,
+    onClose: () -> Unit
+) {
+    val colorScheme = MaterialTheme.colorScheme
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(24.dp)
+            .navigationBarsPadding()
+    ) {
+        Text(
+            text = "Filtros Avançados",
+            color = Color.White,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = "Ordenar por",
+            color = colorScheme.outline,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            SortChip(label = "Recentes", selected = currentSort == SortBy.NEWEST) {
+                onSortChange(
+                    SortBy.NEWEST
+                )
+            }
+            SortChip(
+                label = "Título",
+                selected = currentSort == SortBy.TITLE
+            ) { onSortChange(SortBy.TITLE) }
+            SortChip(label = "Progresso", selected = currentSort == SortBy.PROGRESS) {
+                onSortChange(
+                    SortBy.PROGRESS
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Text(
+            text = "Status de leitura",
+            color = colorScheme.outline,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            FilterOption(
+                label = "Todos os livros",
+                selected = currentFilter == SearchProgressFilter.ALL,
+                onClick = { onFilterChange(SearchProgressFilter.ALL) }
+            )
+            FilterOption(
+                label = "Em progresso",
+                selected = currentFilter == SearchProgressFilter.IN_PROGRESS,
+                onClick = { onFilterChange(SearchProgressFilter.IN_PROGRESS) }
+            )
+            FilterOption(
+                label = "Concluídos",
+                selected = currentFilter == SearchProgressFilter.COMPLETED,
+                onClick = { onFilterChange(SearchProgressFilter.COMPLETED) }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Button(
+            onClick = onClose,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = colorScheme.primary)
+        ) {
+            Text("Aplicar Filtros", fontWeight = FontWeight.Bold)
+        }
+    }
+}
+
+@Composable
+private fun SortChip(label: String, selected: Boolean, onClick: () -> Unit) {
+    val colorScheme = MaterialTheme.colorScheme
+    Surface(
+        onClick = onClick,
+        shape = RoundedCornerShape(12.dp),
+        color = if (selected) colorScheme.primary.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.05f),
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            if (selected) colorScheme.primary.copy(alpha = 0.5f) else Color.White.copy(alpha = 0.1f)
+        )
+    ) {
+        Text(
+            text = label,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            color = if (selected) colorScheme.primary else colorScheme.outline,
+            fontSize = 13.sp,
+            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
+        )
+    }
+}
+
+@Composable
+private fun FilterOption(label: String, selected: Boolean, onClick: () -> Unit) {
+    val colorScheme = MaterialTheme.colorScheme
+    Surface(
+        onClick = onClick,
+        shape = RoundedCornerShape(16.dp),
+        color = if (selected) Color.White.copy(alpha = 0.05f) else Color.Transparent
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = label,
+                color = if (selected) Color.White else colorScheme.outline,
+                fontSize = 15.sp,
+                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
+            )
+            if (selected) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = null,
+                    tint = colorScheme.primary,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+        }
+    }
+}
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable

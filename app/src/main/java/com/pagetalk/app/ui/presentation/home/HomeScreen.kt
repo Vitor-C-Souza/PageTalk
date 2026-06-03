@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,7 +19,6 @@ import com.pagetalk.app.ui.components.HeaderCustom
 import com.pagetalk.app.ui.navigation.Screen
 import com.pagetalk.app.ui.presentation.home.components.ContinueListen
 import com.pagetalk.app.ui.presentation.home.components.RecentDocuments
-import com.pagetalk.app.ui.presentation.home.viewmodel.HomeViewModel
 import com.pagetalk.app.ui.theme.PageTalkTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -29,17 +29,21 @@ fun HomeScreen(
     onNavigateToSearch: () -> Unit = {},
     onNavigateToLibrary: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
+    onNavigateToPlayer: (Long) -> Unit = {},
     viewModel: HomeViewModel = koinViewModel()
 ) {
+    val continueListeningBooks by viewModel.continueListeningBooks.collectAsState()
+    val recentBooks by viewModel.recentBooks.collectAsState()
 
     HomeScreenContent(
-        modifier,
-        onNavigateToImport,
-        onNavigateToSearch,
-        onNavigateToLibrary,
-        onNavigateToProfile,
-        viewModel.continueListeningBooks.collectAsState().value,
-        viewModel.recentBooks.collectAsState().value
+        modifier = modifier,
+        onNavigateToImport = onNavigateToImport,
+        onNavigateToSearch = onNavigateToSearch,
+        onNavigateToLibrary = onNavigateToLibrary,
+        onNavigateToProfile = onNavigateToProfile,
+        onNavigateToPlayer = onNavigateToPlayer,
+        continueListeningBooks = continueListeningBooks,
+        recentBooks = recentBooks
     )
 }
 
@@ -50,6 +54,7 @@ fun HomeScreenContent(
     onNavigateToSearch: () -> Unit = {},
     onNavigateToLibrary: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
+    onNavigateToPlayer: (Long) -> Unit = {},
     continueListeningBooks: List<Book> = emptyList(),
     recentBooks: List<Book> = emptyList()
 ) {
@@ -86,12 +91,14 @@ fun HomeScreenContent(
             item {
                 ContinueListen(
                     onAddClick = onNavigateToImport,
+                    onBookClick = onNavigateToPlayer,
                     books = continueListeningBooks
                 )
             }
             item {
                 RecentDocuments(
-                    books = recentBooks
+                    books = recentBooks,
+                    onBookClick = onNavigateToPlayer
                 )
             }
         }
@@ -106,6 +113,7 @@ private fun HomeScreenPreview() {
         HomeScreenContent(
             continueListeningBooks = listOf(
                 Book(
+                    id = 1,
                     title = "Livro 1",
                     author = "Autor 1",
                     progress = 0.45f,
@@ -114,6 +122,7 @@ private fun HomeScreenPreview() {
                     pages = 100
                 ),
                 Book(
+                    id = 2,
                     title = "Livro 2",
                     author = "Autor 2",
                     progress = 0.80f,
@@ -124,6 +133,7 @@ private fun HomeScreenPreview() {
             ),
             recentBooks = listOf(
                 Book(
+                    id = 3,
                     title = "Documento 1",
                     author = "Autor A",
                     progress = 0f,
@@ -132,6 +142,7 @@ private fun HomeScreenPreview() {
                     pages = 10
                 ),
                 Book(
+                    id = 4,
                     title = "Documento 2",
                     author = "Autor B",
                     progress = 0f,
@@ -140,6 +151,7 @@ private fun HomeScreenPreview() {
                     pages = 15
                 ),
                 Book(
+                    id = 5,
                     title = "Documento 3",
                     author = "Autor C",
                     progress = 0f,
